@@ -8,8 +8,17 @@ public class PlayerShooting : MonoBehaviour
 
 	public GameObject[] prefab;
 	public GameObject shootPoint;
-	int count = 0;
-	// Update is called once per frame
+	public GameObject powerUpParticlesPrefab;
+	private PlayerMovement playerMovement;
+
+	int count;
+	// Update is cald once per frame
+
+	private void Awake()
+	{
+		count = 0;
+		playerMovement = GetComponent<PlayerMovement>();
+	}
 
 	public void OnFire()
 	{
@@ -29,5 +38,25 @@ public class PlayerShooting : MonoBehaviour
 			clone.transform.position = shootPoint.transform.position;
 			clone.transform.rotation = shootPoint.transform.rotation;
 		}
+	}
+
+	public void OnEnemyKilled()
+	{
+		Debug.Log("PowerUp()");
+		StartCoroutine(PowerUp());
+	}
+	private IEnumerator PowerUp()
+	{
+		powerUpParticlesPrefab.GetComponent<ParticleSystem>().Play();
+
+		// 플레이어 속도와 공격력 증가
+		playerMovement.speed *= 1.5f;
+		playerMovement.rotationSpeed *= 1.5f;
+
+		// 일정 시간 동안 효과 유지
+		yield return new WaitForSeconds(5f);
+
+		playerMovement.speed /= 1.5f;
+		playerMovement.rotationSpeed /= 1.5f;
 	}
 }
